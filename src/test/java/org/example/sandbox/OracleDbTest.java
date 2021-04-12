@@ -20,6 +20,7 @@ public class OracleDbTest {
     // |- Statement +
     // |- PreparedStatement +
     // |- CallableStatement
+    // ResultSet
 
     private static Connection connection;
 
@@ -59,7 +60,10 @@ public class OracleDbTest {
         }
     }
 
+    // ORM - object-relation mapping
+    // Hibernate
     @Test
+    @Disabled
     public void testStatements() {
         try {
             Statement statement = connection.createStatement();
@@ -77,6 +81,7 @@ public class OracleDbTest {
     // java.util.Date
     // java.sql.Date
     @Test
+    @Disabled
     public void testPreparedStatement() {
         try {
             String sql =
@@ -93,4 +98,71 @@ public class OracleDbTest {
         }
     }
 
+    @Test
+    @Disabled
+    public void createTableExample() {
+        try {
+            String sql = "create table my_worker(\n" +
+                    "    id NUMBER GENERATED AS IDENTITY PRIMARY KEY,\n" +
+                    "    full_name VARCHAR(100) NOT NULL,\n" +
+                    "    department VARCHAR(50) NOT NULL,\n" +
+                    "    salary NUMBER(8,2) NOT NULL,\n" +
+                    "    work_since DATE NOT NULL\n" +
+                    ")";
+            Statement statement = connection.createStatement();
+            boolean result = statement.execute(sql);
+            System.out.println(result);
+        } catch (SQLException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSelectRequest() {
+        try {
+            String sql = "SELECT full_name, department FROM my_worker WHERE salary > 900.00";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setDouble(1, 900.0);
+//            boolean hasResult = preparedStatement.execute();
+//            System.out.println(hasResult);
+//            assertTrue(hasResult, "Result of the query is empty.");
+            ResultSet results = preparedStatement.executeQuery();
+            while (results.next()) {
+                System.out.println(
+                                results.getString(2) +
+                                ", " + results.getString(3));
+            }
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
